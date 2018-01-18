@@ -118,8 +118,7 @@ contract ERC20Token is ERC20Interface{
 
 
 contract IaSEther is ERC20Token {
-    // total supply of tokens
-    // increased with all eth send to the contract
+    // Total supply of tokens
     uint256 internal maxSupply;
 
     // Token symbol
@@ -159,7 +158,7 @@ contract IaSEther is ERC20Token {
     }
 
     function transfer(address _to, uint256 _amount) public returns (bool){
-        // first recevie tokens by the seller
+        // first receive tokens by the seller
         bool success = super.transfer(_to, _amount);
         // send the ETH back to the seller
         if ((_to == address(this)) && success){
