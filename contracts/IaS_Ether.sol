@@ -117,16 +117,16 @@ contract ERC20Token is ERC20Interface{
 }
 
 
-contract IaSMoney is ERC20Token {
+contract IaSEther is ERC20Token {
     // total supply of tokens
     // increased with all eth send to the contract
     uint256 internal maxSupply;
 
     // Token symbol
-    string public symbol = 'ISM';
+    string public symbol = 'ISE';
 
     // Name of token
-    string public name = 'I. & S. Money';
+    string public name = 'I. & S. Ether';
 
     // Gold = BTC
     uint8 public decimals = 9;
@@ -134,15 +134,21 @@ contract IaSMoney is ERC20Token {
     // unit = 10**decimals
     uint256 public constant unit = 1000000000;
 
+    // The ETH to ISE exchange rate
     uint256 public constant price = 1 finney / unit;
 
-    function IaSMoney() public{
+    function IaSEther() public{
         // very scarce 42k coins:
         maxSupply = 42000 * unit;
         balances[this] = maxSupply;
     }
 
     function () public payable{
+        buy();
+    }
+
+    function buy() public payable{
+        // compute the number of tokens to send back
         uint256 amount = msg.value / price;
         // ship the tokens to the buyer
         require(executeTransfer(this, msg.sender, amount));

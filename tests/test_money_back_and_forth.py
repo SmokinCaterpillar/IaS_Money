@@ -30,21 +30,21 @@ def get_wei(chain, accounts):
 def test_init(chain, accounts):
 
     provider = chain.provider
-    ias_money, deploy_txn_hash = provider.get_or_deploy_contract('IaSMoney')
+    ias_money, deploy_txn_hash = provider.get_or_deploy_contract('IaSEther')
 
     # Check some initial settings:
     assert ias_money.call().balanceOf(ias_money.address) == total_supply
     assert ias_money.call().balanceOf(accounts[1]) == 0
     assert ias_money.call().totalSupply() == total_supply
-    assert ias_money.call().name() == 'I. & S. Money'
-    assert ias_money.call().symbol() == 'ISM'
+    assert ias_money.call().name() == 'I. & S. Ether'
+    assert ias_money.call().symbol() == 'ISE'
     assert ias_money.call().decimals() == decimals
 
 
 def test_buy_and_sell(chain, accounts, web3):
 
     provider = chain.provider
-    ias_money, deploy_txn_hash = provider.get_or_deploy_contract('IaSMoney')
+    ias_money, deploy_txn_hash = provider.get_or_deploy_contract('IaSEther')
 
     initial = web3.eth.getBalance(accounts[1])
     chain.wait.for_receipt(web3.eth.sendTransaction({'value':10*price,
@@ -78,3 +78,13 @@ def test_buy_and_sell(chain, accounts, web3):
 
     assert ias_money.call().balanceOf(accounts[2]) == 1 * unit
     assert sold > after + 3.99*price
+
+    chain.wait.for_receipt(ias_money.transact({'from':accounts[2]}).transfer(ias_money.address,
+                                                                             4 * unit))
+    sold2 = web3.eth.getBalance(accounts[2])
+    assert sold > sold2
+
+    chain.wait.for_receipt(ias_money.transact({'from':accounts[2]}).transfer(ias_money.address,
+                                                                             1 * unit))
+    sold3 = web3.eth.getBalance(accounts[2])
+    assert sold < sold3
